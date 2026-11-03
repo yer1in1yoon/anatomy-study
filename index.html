@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ANATOMY STUDY | 해부학 용어 학습</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- 상단 메뉴 -->
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="#" class="logo" data-view="home">ANATOMY <span>STUDY</span></a>
+      <nav class="nav" aria-label="주 메뉴">
+        <button class="nav-btn" data-view="home">홈</button>
+        <button class="nav-btn" data-view="terms">용어 학습</button>
+        <button class="nav-btn" data-view="flash">플래시카드</button>
+        <button class="nav-btn" data-view="quiz">퀴즈</button>
+        <button class="nav-btn" data-view="wrong">오답노트 <span id="wrong-badge" class="count-badge">0</span></button>
+        <button class="nav-btn" data-view="progress">학습 진도</button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+
+    <!-- 1. 홈 -->
+    <section id="view-home" class="view">
+      <div class="hero">
+        <h1>해부학 용어, 쉽고 재미있게 외우세요</h1>
+        <p>영어 용어와 한글 명칭을 학습하고, 플래시카드와 퀴즈로 복습하세요.</p>
+        <button class="btn btn-primary btn-lg" data-view="flash">학습 시작하기</button>
+      </div>
+
+      <div class="stat-grid">
+        <div class="stat-card"><span class="stat-label">전체 용어</span><strong id="home-total">0</strong></div>
+        <div class="stat-card"><span class="stat-label">학습한 용어</span><strong id="home-seen">0</strong></div>
+        <div class="stat-card"><span class="stat-label">퀴즈 정답률</span><strong id="home-acc">-</strong></div>
+        <div class="stat-card"><span class="stat-label">오답노트</span><strong id="home-wrong">0</strong></div>
+      </div>
+
+      <div class="menu-grid">
+        <button class="menu-card" data-view="terms"><span class="menu-title">📖 용어 학습</span><span class="menu-desc">영어·한글 명칭과 설명 보기</span></button>
+        <button class="menu-card" data-view="flash"><span class="menu-title">🃏 플래시카드</span><span class="menu-desc">앞면 영어, 뒷면 한글과 설명</span></button>
+        <button class="menu-card" data-view="quiz"><span class="menu-title">✅ 객관식 퀴즈</span><span class="menu-desc">계통별로 실력 확인</span></button>
+        <button class="menu-card" data-view="quiz" data-quiz-tab="short"><span class="menu-title">✍️ 단답형 퀴즈</span><span class="menu-desc">직접 입력하며 정확히 암기</span></button>
+        <!-- [추가] 인체 그림 퀴즈 바로가기 -->
+        <button class="menu-card" data-view="quiz" data-quiz-tab="body"><span class="menu-title">🦴 인체 그림 퀴즈</span><span class="menu-desc">뼈대 그림에서 직접 찾기</span></button>
+        <button class="menu-card" data-view="wrong"><span class="menu-title">📝 오답노트</span><span class="menu-desc">틀린 용어 자동 저장</span></button>
+        <button class="menu-card" data-view="progress"><span class="menu-title">📊 학습 진도</span><span class="menu-desc">진도와 정답률 확인</span></button>
+      </div>
+
+      <p class="notice">※ 이 사이트의 용어와 설명은 샘플입니다. 시험 대비 전에 반드시 사용하는 교재와 대조해 주세요.</p>
+    </section>
+
+    <!-- 2. 용어 학습 -->
+    <section id="view-terms" class="view">
+      <h2 class="page-title">용어 학습</h2>
+      <div class="controls">
+        <input id="term-search" class="input" type="search" placeholder="영어 또는 한글로 검색">
+        <select id="term-system" class="select system-select"></select>
+        <span id="term-count" class="muted"></span>
+      </div>
+      <p class="notice">※ "교재 대조 필요" 표시가 있는 항목은 사용하시는 교재와 확인해 주세요.</p>
+      <div id="term-list" class="term-grid"></div>
+    </section>
+
+    <!-- 3. 플래시카드 -->
+    <section id="view-flash" class="view">
+      <h2 class="page-title">플래시카드</h2>
+      <div class="controls">
+        <select id="flash-system" class="select system-select"></select>
+        <button id="flash-shuffle" class="btn btn-ghost">카드 섞기</button>
+        <span id="flash-progress" class="muted"></span>
+      </div>
+
+      <div id="flashcard" class="flashcard" tabindex="0" role="button" aria-label="카드 뒤집기">
+        <div class="flashcard-inner">
+          <div class="face front">
+            <span id="flash-system-label" class="tag"></span>
+            <div id="flash-en" class="flash-en"></div>
+            <span class="hint">클릭하여 뒤집기</span>
+          </div>
+          <div class="face back">
+            <div id="flash-ko" class="flash-ko"></div>
+            <p id="flash-desc" class="flash-desc"></p>
+          </div>
+        </div>
+      </div>
+
+      <div class="flash-actions">
+        <button id="flash-prev" class="btn btn-ghost">← 이전</button>
+        <button id="flash-unknown" class="btn btn-danger">모르겠어요</button>
+        <button id="flash-known" class="btn btn-success">알고 있어요</button>
+        <button id="flash-next" class="btn btn-ghost">다음 →</button>
+      </div>
+      <p id="flash-msg" class="muted center"></p>
+      <p class="muted center small">"모르겠어요"를 누르면 오답노트에 저장됩니다. 키보드 ← → 로 이동, 스페이스바로 뒤집기가 가능합니다.</p>
+    </section>
+
+    <!-- 4. 퀴즈 -->
+    <section id="view-quiz" class="view">
+      <h2 class="page-title">퀴즈</h2>
+
+      <!-- [수정] 객관식 / 단답형 / 인체 그림 탭 -->
+      <div class="tabs" role="tablist" aria-label="퀴즈 유형">
+        <button id="tab-mc" class="tab active" role="tab" aria-selected="true" data-quiz-tab="mc">객관식</button>
+        <button id="tab-short" class="tab" role="tab" aria-selected="false" data-quiz-tab="short">단답형</button>
+        <button id="tab-body" class="tab" role="tab" aria-selected="false" data-quiz-tab="body">인체 그림</button>
+      </div>
+
+      <!-- 객관식 (기존) -->
+      <div id="quiz-setup" class="panel">
+        <h3>객관식 퀴즈 설정</h3>
+        <div class="form-row">
+          <label for="quiz-system">계통</label>
+          <select id="quiz-system" class="select system-select"></select>
+        </div>
+        <div class="form-row">
+          <label for="quiz-count">문제 수</label>
+          <select id="quiz-count" class="select">
+            <option value="5">5문제</option>
+            <option value="10" selected>10문제</option>
+            <option value="20">20문제</option>
+            <option value="all">전체</option>
+          </select>
+        </div>
+        <button id="quiz-start" class="btn btn-primary btn-lg">퀴즈 시작</button>
+      </div>
+
+      <div id="quiz-play" class="panel" hidden>
+        <div class="quiz-top">
+          <span id="quiz-progress" class="muted"></span>
+          <div class="bar"><div id="quiz-bar" class="bar-fill"></div></div>
+        </div>
+        <p class="quiz-label">다음 영어 용어의 한글 명칭은 무엇입니까?</p>
+        <div id="quiz-question" class="quiz-question"></div>
+        <div id="quiz-options" class="options"></div>
+        <div id="quiz-feedback" class="feedback" hidden></div>
+        <button id="quiz-next" class="btn btn-primary" hidden>다음 문제</button>
+      </div>
+
+      <div id="quiz-result" class="panel" hidden>
+        <h3>퀴즈 결과</h3>
+        <div id="quiz-score" class="quiz-score"></div>
+        <div id="quiz-result-wrong"></div>
+        <div class="flash-actions">
+          <button id="quiz-retry" class="btn btn-primary">다시 풀기</button>
+          <button class="btn btn-ghost" data-view="wrong">오답노트 보기</button>
+        </div>
+      </div>
+
+      <!-- 단답형: 설정 -->
+      <div id="short-setup" class="panel" hidden>
+        <h3>단답형 퀴즈 설정</h3>
+        <div class="form-row">
+          <label for="short-system">계통</label>
+          <select id="short-system" class="select system-select"></select>
+        </div>
+        <div class="form-row">
+          <label for="short-direction">유형</label>
+          <select id="short-direction" class="select">
+            <option value="mix" selected>혼합 (영어↔한글)</option>
+            <option value="en2ko">영어 → 한글</option>
+            <option value="ko2en">한글 → 영어</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label for="short-count">문제 수</label>
+          <select id="short-count" class="select">
+            <option value="5">5문제</option>
+            <option value="10" selected>10문제</option>
+            <option value="20">20문제</option>
+            <option value="all">전체</option>
+          </select>
+        </div>
+        <p class="muted small">한글 답은 괄호 앞뒤의 명칭 중 어느 쪽을 입력해도 정답으로 인정합니다. 띄어쓰기와 영문 대소문자는 구분하지 않습니다.</p>
+        <button id="short-start" class="btn btn-primary btn-lg">퀴즈 시작</button>
+      </div>
+
+      <!-- 단답형: 풀이 -->
+      <div id="short-play" class="panel" hidden>
+        <div class="quiz-top">
+          <span id="short-progress" class="muted"></span>
+          <div class="bar"><div id="short-bar" class="bar-fill"></div></div>
+        </div>
+        <span id="short-dir-tag" class="tag"></span>
+        <p id="short-label" class="quiz-label"></p>
+        <div id="short-question" class="quiz-question short-question"></div>
+
+        <form id="short-form" class="short-form" autocomplete="off">
+          <input id="short-input" class="input short-input" type="text"
+                 autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false"
+                 aria-label="정답 입력">
+          <button id="short-submit" type="submit" class="btn btn-primary">제출</button>
+        </form>
+        <p id="short-msg" class="short-msg" aria-live="polite"></p>
+
+        <div id="short-feedback" class="feedback" hidden></div>
+        <button id="short-next" class="btn btn-primary" hidden>다음 문제</button>
+      </div>
+
+      <!-- 단답형: 결과 -->
+      <div id="short-result" class="panel" hidden>
+        <h3>단답형 퀴즈 결과</h3>
+        <div id="short-score" class="quiz-score"></div>
+        <div id="short-result-wrong"></div>
+        <div class="flash-actions">
+          <button id="short-retry" class="btn btn-primary">다시 풀기</button>
+          <button class="btn btn-ghost" data-view="wrong">오답노트 보기</button>
+        </div>
+      </div>
+
+      <!-- [추가] 인체 그림 퀴즈: 설정 -->
+      <div id="body-setup" class="panel" hidden>
+        <h3>인체 그림 퀴즈 설정 (뼈대계 · 앞면)</h3>
+        <div class="form-row">
+          <label for="body-mode">유형</label>
+          <select id="body-mode" class="select">
+            <option value="mix" selected>혼합</option>
+            <option value="find">뼈 찾기 (이름 보고 그림 클릭)</option>
+            <option value="choice">이름 고르기 (객관식)</option>
+            <option value="input">이름 입력 (단답형)</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label for="body-count">문제 수</label>
+          <select id="body-count" class="select">
+            <option value="5">5문제</option>
+            <option value="10" selected>10문제</option>
+            <option value="20">20문제</option>
+          </select>
+        </div>
+        <p class="muted small">대상 뼈 10개: 두개골, 쇄골, 견갑골, 흉골, 상완골, 요골, 척골, 골반, 대퇴골, 경골. 영어 또는 한글 명칭을 무작위로 묻습니다.</p>
+        <p class="muted small">그림은 인체를 앞에서 본 모습이며, 화면 왼쪽이 인체의 오른쪽(R)입니다. 좌우 어느 쪽 뼈를 선택해도 같은 뼈로 인정됩니다.</p>
+        <button id="body-start" class="btn btn-primary btn-lg">퀴즈 시작</button>
+      </div>
+
+      <!-- [추가] 인체 그림 퀴즈: 풀이 -->
+      <div id="body-play" class="panel panel-wide" hidden>
+        <div class="quiz-top">
+          <span id="body-progress" class="muted"></span>
+          <div class="bar"><div id="body-bar" class="bar-fill"></div></div>
+        </div>
+
+        <div class="body-layout">
+          <div class="body-head">
+            <span id="body-mode-tag" class="tag"></span>
+            <p id="body-label" class="quiz-label"></p>
+            <div id="body-question" class="quiz-question body-question"></div>
+          </div>
+
+          <div class="body-figure">
+            <div id="body-svg-wrap" class="body-svg-wrap"></div>
+          </div>
+
+          <div class="body-answer">
+            <div id="body-options" class="options" hidden></div>
+
+            <form id="body-form" class="short-form" autocomplete="off" hidden>
+              <input id="body-input" class="input short-input" type="text"
+                     autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false"
+                     aria-label="정답 입력">
+              <button id="body-submit" type="submit" class="btn btn-primary">제출</button>
+            </form>
+            <p id="body-msg" class="short-msg" aria-live="polite"></p>
+
+            <div id="body-feedback" class="feedback" hidden></div>
+            <button id="body-next" class="btn btn-primary" hidden>다음 문제</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- [추가] 인체 그림 퀴즈: 결과 -->
+      <div id="body-result" class="panel" hidden>
+        <h3>인체 그림 퀴즈 결과</h3>
+        <div id="body-score" class="quiz-score"></div>
+        <div id="body-result-wrong"></div>
+        <div class="flash-actions">
+          <button id="body-retry" class="btn btn-primary">다시 풀기</button>
+          <button class="btn btn-ghost" data-view="wrong">오답노트 보기</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. 오답노트 -->
+    <section id="view-wrong" class="view">
+      <h2 class="page-title">오답노트</h2>
+      <div class="controls">
+        <span id="wrong-count" class="muted"></span>
+        <button id="wrong-clear" class="btn btn-ghost">전체 비우기</button>
+      </div>
+      <div id="wrong-list" class="term-grid"></div>
+    </section>
+
+    <!-- 6. 학습 진도 -->
+    <section id="view-progress" class="view">
+      <h2 class="page-title">학습 진도</h2>
+      <div class="stat-grid">
+        <div class="stat-card"><span class="stat-label">학습한 용어</span><strong id="pg-seen">0</strong></div>
+        <div class="stat-card"><span class="stat-label">전체 진도</span><strong id="pg-percent">0%</strong></div>
+        <div class="stat-card"><span class="stat-label">푼 문제 수</span><strong id="pg-answered">0</strong></div>
+        <div class="stat-card"><span class="stat-label">전체 정답률</span><strong id="pg-acc">-</strong></div>
+      </div>
+
+      <!-- 단답형 퀴즈 기록 -->
+      <h3 class="section-title">단답형 퀴즈 기록</h3>
+      <div class="stat-grid two">
+        <div class="stat-card"><span class="stat-label">풀이한 문제 수</span><strong id="pg-short-answered">0</strong></div>
+        <div class="stat-card"><span class="stat-label">단답형 정답률</span><strong id="pg-short-acc">-</strong></div>
+      </div>
+
+      <!-- [추가] 인체 그림 퀴즈 기록 -->
+      <h3 class="section-title">인체 그림 퀴즈 기록</h3>
+      <div class="stat-grid two">
+        <div class="stat-card"><span class="stat-label">풀이한 문제 수</span><strong id="pg-body-answered">0</strong></div>
+        <div class="stat-card"><span class="stat-label">인체 그림 정답률</span><strong id="pg-body-acc">-</strong></div>
+      </div>
+      <div id="pg-body-bones" class="panel"></div>
+
+      <h3 class="section-title">계통별 현황</h3>
+      <div id="pg-systems" class="panel"></div>
+
+      <h3 class="section-title">최근 퀴즈 기록</h3>
+      <div id="pg-history" class="panel"></div>
+
+      <button id="pg-reset" class="btn btn-ghost">학습 기록 초기화</button>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">ANATOMY STUDY · 간호학과 해부학 용어 학습</footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
